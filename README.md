@@ -1,6 +1,6 @@
 <p align="center"><img src="https://raw.githubusercontent.com/carjavi/raspberry-pi-code/master/img/raspberry.gif" height="250" alt=" " /></p>
 <br>
-<h1 align="center">Raspberry pi code</h1> 
+<h1 align="center">Raspberry Pi Code</h1> 
 <h4 align="right">Sep 22</h4>
 
 <img src="https://img.shields.io/badge/OS%20-Raspbian%20GNU%2FLinux%2011%20(bulleye)-yellowgreen">
@@ -11,7 +11,7 @@
 
 
 
-collection of codes that I have used in my projects with raspberry
+Collection of codes that I have used in my projects with raspberry
 
 
 ---
