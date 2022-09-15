@@ -11,7 +11,7 @@
 
 
 
-collection of codes that I have used in my projects with raspberry
+compilation of codes that I have used in my projects with raspberry
 
 
 ---
