@@ -1,4 +1,4 @@
-<p align="center"><img src="https://raw.githubusercontent.com/carjavi/raspberry-pi-code/master/img/raspberry_pi_logo.jpg" height="250" alt=" " /></p>
+<p align="center"><img src="https://raw.githubusercontent.com/carjavi/raspberry-pi-code/master/img/raspberry_pi.jpg" height="250" alt=" " /></p>
 <br>
 <h1 align="center">Setting Raspberry Pi Wi-Fi (console)</h1> 
 <h4 align="right">Sep 22</h4>
