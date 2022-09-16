@@ -1,5 +1,4 @@
 <p align="center"><img src="https://raw.githubusercontent.com/carjavi/raspberry-pi-code/master/img/raspberry.gif" height="250" alt=" " /></p>
-<br>
 <h1 align="center">Raspberry Pi Code</h1> 
 <h4 align="right">Sep 22</h4>
 
