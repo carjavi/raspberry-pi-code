@@ -1,5 +1,5 @@
 <p align="center"><img src="https://raw.githubusercontent.com/carjavi/raspberry-pi-code/master/img/raspberry_pi.jpg" height="250" alt=" " /></p>
-<h1 align="center">Display OLED-Pi I2C</h1> 
+<h1 align="center">Display OLED 128x64 0,96" chip SSD1306 I2C</h1> 
 <h4 align="right">Sep 22</h4>
 
 <img src="https://img.shields.io/badge/OS%20-Raspbian%20GNU%2FLinux%2011%20(bulleye)-yellowgreen">
@@ -10,29 +10,32 @@
 
 ## Feature
 
- LCD Oled 128×64 I2C Chip SSH1106 / Chip SSD1306
+Control Display OLED 128x64 0,96" chip SSD1306 with NODEJS
 
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/carjavi/raspberry-pi-code/master/img/SH1106.png"
 </p>
 
-## Configuring I2C with raspi-config
+## Previous
 ```
 sudo raspi-config
 ```
-In the ```raspi-config``` user interface navigate to ```Interfacing Options >> I2C``` and answer the question ```"Would you like the ARM I2C interface to be enabled?"``` with ```<Yes>```. After the next reboot user pi will be able to use the I2C bus without root privileges.
+Enabled I2C ```Interfacing Options >> I2C``` <br>
+Enabled SSH ```Interfacing Options >> SSH``` <br>
+[NodeJs & NPM](https://github.com/carjavi/install-nodejs-ARM)<br>
+[Update Raspberry](https://github.com/carjavi/raspberry-pi-code)
+<br>
 
 [Configuring I2C Manually](https://github.com/fivdi/i2c-bus/blob/HEAD/doc/raspberry-pi-i2c.md)
+<br> <br>
 
 ## Testing bus
 ```
 i2cdetect -y 1
 ```
 <br>
-<br> 
 
-# Display OLED 128x64 0,96" chip SSD1306
 
 ## Install Libraries
 ```
