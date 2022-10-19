@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <link rel="stylesheet" href="/css/bootstrap.min.css"> 
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+        <!-- Custom styles for this template -->
+        <link rel="stylesheet" href="/css/style.css" />    
+        <link rel="stylesheet" href="/css/carlos.css" /> 
+
+
+        
+        <script>
+            var socket = io();
+            
+            function reboot() {
+                socket.emit('reboot');
+            }
+            
+            function shutdown() {
+                socket.emit('shutdown');
+            }
+            
+            
+            function enableAdvanced() {
+                // need to invert, dk why, maybe todo with transition/animation duration
+                var enabled = !document.getElementById("advanced-checkbox").checked;
+                console.log("advanced checkbox enabled", enabled);
+                var div = document.getElementsByClassName("companion-advanced");
+                for (var i=0; i<div.length; i++) {
+                    div[i].style.display = enabled ? "block" : "none";
+                }
+            }
+            
+        
+            socket.on('version', function(data) {
+                document.getElementById('version1').innerHTML = data;
+                console.log('got version in header')
+            });
+            socket.emit('get version');
+        </script>
+        
+        
+        
+
+        
+
+        <script>
+
+        var btnJoinNetwork = document.getElementById('joinButton');            
+
+            // WiFi Setup
+            var networking = io('/networking');
+            
+            networking.on('wifi aps', function(data) {
+            
+                console.log('got wifi aps')
+                var select = document.getElementById("ssid");
+                
+                if (select.options[select.selectedIndex]) {
+                    var currentSSID = select.options[select.selectedIndex].text;
+                    //console.log('current SSID:' + currentSSID);
+                }
+                
+                while (select.hasChildNodes()) {
+                    select.removeChild(select.lastChild);
+                }
+                
+                var index = 0;
+                var newIndex = 0;
+                
+                data.forEach(function(line) {
+                    var option = document.createElement('option');
+                    option.value = line;
+                    option.innerHTML = line;
+                    if (currentSSID && line == currentSSID) {
+                        newIndex = index;
+                        //console.log('match! new index:' + index);
+                    }
+                    select.appendChild(option);
+                    index++;
+                    //console.log(index);
+                });
+                
+                select.selectedIndex = newIndex;
+            });
+
+            
+            socket.on('internet status', function(data) {
+                console.log('got internet status')
+               //console.log(data);
+                var statusIndicator = document.getElementById("internet-status");
+                if (data == true) {
+                    statusIndicator.innerHTML = '<h4 style="color:green;">Connected</h1>';
+                } else {
+                    statusIndicator.innerHTML = '<h4 style="color:red;">Not Connected</h1>';
+                }
+            });
+
+
+            // RSSI 
+            socket.on('QA', function(data) {
+                var QA = document.getElementById("link-quality");
+                QA.innerHTML = data;
+            });
+            socket.on('SL', function(data) {
+                var SL = document.getElementById("signal-level");
+                SL.innerHTML = data;
+            });
+
+            
+            // show status internet
+            networking.on('wifi status', function(data) {
+                //console.log('got wifi status')
+                //console.log(data);
+                var statusIndicator = document.getElementById("wifi-status");
+                statusIndicator.innerHTML = data;
+            });
+
+
+            // valida una contraseña valida para habilitar el boton de contectar a esa red
+            function verificar(valor) {
+                if (valor.length > 7){
+                    document.getElementById('joinButton').disabled = false;
+                    //console.log("ready");
+                } else {
+                    document.getElementById('joinButton').disabled = true;
+                }
+                //console.log("valor:" + valor.length);
+            }
+          
+
+            // para unirse a la nueva red
+            function joinNetwork() {
+                disableButton(true);
+                var select = document.getElementById("ssid");
+                var ssid = select.options[select.selectedIndex].text;
+                networking.emit('join network', {
+                    "ssid" : ssid,
+                    "password" : document.getElementById('password').value
+                });
+            };
+
+     
+            function disableButton(disabled) {
+                document.getElementById('joinButton').disabled = disabled;
+                document.getElementById('spinner').style.visibility = disabled ? "visible" : "hidden";
+            }
+            
+            //scan las redes cercanas
+            networking.emit('get wifi aps');
+                  
+            setInterval(function() {
+                networking.emit('get wifi aps');
+            }, 6000);
+ 
+            // \WiFi Setup
+            
+            
+        </script>
+
+
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top"> <!-- navbar navbar-inverse navbar-fixed-top -->
+            <div class="container">
+                <div class="navbar-header">
+                    
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                     
+                     <!-- <a class="navbar-brand" href="#" style="color:white">A++</a> -->
+                     
+                    <a class="navbar-brand" href="#">
+                        <img src="/img/carjavi.png"  width="70" class="carjavi" alt=""/> <!--   class="navbar-brand sst-image" -->
+                    </a>
+                    
+                    
+                    <!-- 
+                    <p class="text" style="color:white">
+                        Companion Version:
+                        <span id="companion version1"></span>
+                    </p> 
+                    -->
+                    
+                </div>
+                <div id="navbar" class="collapse navbar-collapse" align="right">
+                    
+                    <ul class="nav navbar-nav">
+                        <li><a class="navbar-brand" href="#" style="color:white" class="carjavi" >&nbsp;&nbsp;&nbsp;&nbsp;</a> </li>
+                        <li><a class="navbar-brand" href="#" style="color:white" class="carjavi" >&nbsp;&nbsp;&nbsp;&nbsp;</a> </li>
+                        <li><a class="navbar-brand" href="#" style="color:white" class="carjavi" >&nbsp;&nbsp;&nbsp;&nbsp;</a> </li>
+                        <li><a class="navbar-brand" href="#" style="color:white" class="carjavi" >&nbsp;&nbsp;&nbsp;&nbsp;</a> </li>
+                        <!-- 
+                        <li><a href="/network">Network</a></li>
+                        <li><a href="/system">System</a></li>
+                        <li><a href="/camera">Camera</a></li>
+                        <li><a href="/routing">Routing</a></li>
+                        -->
+                    </ul>
+                    <form class="navbar-form navbar-right">
+                        <button onclick="reboot()" class="btn btn-primary btn-sm navbar-btn">Reboot</button>
+                        <button onclick="shutdown()" class="btn btn-error btn-sm navbar-btn">Shutdown</button>
+                    <ul class="toggle">
+                        <label class="switch">
+                            <input id='advanced-checkbox' type="checkbox">
+                            <span class="slidernew round" onclick="enableAdvanced()"></span>
+                        </label>
+                        Enable Advanced Options
+                    </ul>
+                    </form>
+                </div><!--/.nav-collapse -->
+            </div>
+
+        </nav>
+
+        
+
+        <div class="container">
+
+
+            <h1>Network Setup</h1>
+
+
+            <!-- Wifi Setup -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Wifi Setup</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form onsubmit="joinNetwork(); return false">
+                                <h3>Wifi SSID:</h3>
+                                <select class="form-control" id="ssid" style="width: 200px;"></select>
+                                <h3>Password:</h3>
+                                <div class="form-group">
+                                    <input class="form-control" id="password" type="password" style="width: 200px;" onkeyup="verificar(this.value);"/>
+                                    <button id="joinButton" type="submit" class="btn btn-primary" disabled>Join Network</button>
+                                    <i id="spinner" class="fa fa-refresh fa-spin fa-2x fa-fw" style="visibility:hidden"></i>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Wifi Status</h3>
+                        </div>
+                        <div class="panel-body">
+                            <h4>Wifi Status:</h4> <span id="wifi-status">Pending...</span>
+                            
+                            <h4>Internet Status:</h4>
+                            <h5><span id="internet-status">Pending...</span></h5>
+                            <h4>Link quality:</h4>
+                            <h5><span id="link-quality">Pending...</span></h5>
+                            <h4>Signal level:</h4>
+                            <h5><span id="signal-level">Pending...</span></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- Ethernet Setup -->
+            <div class="row companion-advanced" style="display:none">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                Monitor System
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <h4 id="ethernet-ip">Current Temperature:</h4>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    Battery Status
+                                </h3>
+                            </div>
+                            
+                            <div class="panel-body">
+                                <h1>Indicator Battery Status </h1>
+                                
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            
+
+
+
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div>
+                        <p class="text-muted text-right">carjavi GUI System Monitor. <br />For more information, please visit <a href="http://www.instintodigitel.net">www.instintodigitel.net</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </body>
+
+</html>

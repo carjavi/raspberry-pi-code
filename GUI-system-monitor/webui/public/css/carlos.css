@@ -1,0 +1,34 @@
+
+
+/* carjavi prueba */
+.carlos {
+  	font-family: 'Open Sans', sans-serif;
+	color: rgb(156, 10, 100);
+	font-weight: 900;
+	font-size: 13pt;
+}
+
+/* Centrar vertical y horizontalmente una imagen con propiedad transform */
+.carjavi {
+	position: absolute;
+    left: 8%;
+    top: 50%;
+	transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+}
+
+
+.version_contenedor {
+	background-color: #0c0c0c;
+	height: 60px;
+}
+
+/* Centrar vertical y horizontalmente una imagen con propiedad transform 
+.carjavi {
+	position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+}
+*/

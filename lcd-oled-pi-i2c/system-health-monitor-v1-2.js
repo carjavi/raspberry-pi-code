@@ -113,22 +113,53 @@ function updateSystemData(){
       let totalMemory = monitor.getMemTotal();
       let freeMemory = monitor.getMemFree();
       let memUsage = ((totalMemory - freeMemory) / totalMemory) * 100;
+      var percentage = Math.round(memUsage);
 
-  
+      var d = new Date();
+      var date = d.toLocaleString()
+
+      // +++++++++++++++++++++++++++++++++++++++++++++++ show Display ++++++++++++++++ 
       oled.setCursor(0, spacing*0);
       oled.writeString(font, 1, ip , 1, true); 
       
-      oled.setCursor(0, spacing*1);
-      oled.writeString(font, 1, mac, 1, true);
+      //oled.setCursor(0, spacing*1);
+      //oled.writeString(font, 1, mac, 1, true);
 
-      oled.setCursor(0, spacing*2);
-      oled.writeString(font, 1, "CPU temp:", 1, true);
-      oled.setCursor(60, spacing*2);
-      oled.writeString(font, 1, temp + " oC", 1, true);
+      oled.setCursor(0, spacing*1);
+      oled.writeString(font, 1, "CPU temp: "+ temp + " oC", 1, true);
+      
+
+      oled.setCursor(0, spacing*2); // ---------------------- Battety ---------------------
+      oled.writeString(font, 1, "Baterry:", 1, true);
+      //rectangulo del valor battery
+      oled.drawLine(52, spacing*2, 100, spacing*2, 1); //recta superior
+      oled.drawLine(52, spacing*2+7, 100, spacing*2+7, 1); //recta superior
+      oled.drawPixel([ // recta horizontal derecha
+        [100, spacing*2, 1],
+        [100, spacing*2+1, 1],
+        [100, spacing*2+2, 1],
+        [100, spacing*2+3, 1],
+        [100, spacing*2+4, 1],
+        [100, spacing*2+5, 1],
+        [100, spacing*2+6, 1]
+      ]);
+      oled.drawPixel([ // recta horizontal izquierda
+        [52, spacing*2, 1],
+        [52, spacing*2+1, 1],
+        [52, spacing*2+2, 1],
+        [52, spacing*2+3, 1],
+        [52, spacing*2+4, 1],
+        [52, spacing*2+5, 1],
+        [52, spacing*2+6, 1]
+      ]);
+      //barra del valor
+      oled.fillRect(52,spacing*2,memUsage,8, 1);
+      // % del valor de la batteria
+      oled.setCursor(108, spacing*2);
+      oled.writeString(font, 1, percentage +"%", 1, true); // ---------------------------------------------
 
       oled.setCursor(0, spacing*3);
-      oled.writeString(font, 1, "MEM:", 1, true);
-      oled.fillRect(27,spacing*3,memUsage   ,8, 1);
+      oled.writeString(font, 1, date, 1, true); // oled.writeString(font, 1, "Date: " + date, 1, true);
 
       oled.setCursor(0, spacing*4);
       oled.writeString(font, 1, day + "d " + hour + "h " + minute + "m " + second + "s", 1, true);
