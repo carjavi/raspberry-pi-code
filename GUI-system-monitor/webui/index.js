@@ -35,11 +35,11 @@ var app = express();
 const http = require('http');
 const child_process = require('child_process');
 var fs = require('fs');
-//const SocketIOFile = require('socket.io-file');
-//var logger = require('tracer').console();
-//var os = require("os");
+var os = require("os");
 var home_dir = process.env.HOME
 app.use('/webui.log', express.static(home_dir +'/.webui.log'));
+//const SocketIOFile = require('socket.io-file');
+//var logger = require('tracer').console();
 // __dirname  = /home/pi/webui
 // home_dir = /home/pi
 //logger.log('carjavi webgui');
@@ -64,6 +64,8 @@ var pngtolcd = require('png-to-lcd');
 const Gpio = require('onoff').Gpio;
 const button_menu = new Gpio(27, "in", "both", { debounceTimeout: 100 });
 
+//viables generales
+// oled
 var oled = new oled(i2cBus, opts);
 var page = 1;
 var linea1;
@@ -71,6 +73,7 @@ var linea2;
 var linea3;
 var linea4;
 var linea5;
+// wifi
 var status_wifi = "Disconnected";
 var ip = "< not-ip >";
 var internet = "< not >";
@@ -78,7 +81,28 @@ var SL = "-dBm";
 var QA= "0%";
 let spacing = 12;
 var y = 0;
-//---------------------------------------------
+// systema
+var hostname = "";
+var temp_cpu = 0;
+var memUsage = 0;
+var mem_porce = 0;
+var ram_free = 0;
+var ram_total = 0;
+var diskUsage = 0;
+var battlevel = 0;
+var mac = "";
+//tiempo
+var time;
+var t = 0; // calculo del tiempo transcurrido
+var days = 0;
+var hour = 0;
+var minute = 0;
+var second = 0;
+// fecha
+var day;
+var month;
+var  year;
+//------------------------------------------
 
 
 app.use(express.static(__dirname + '/public/'));
@@ -274,6 +298,9 @@ function update_Oled(){
 				SL = "-dBm";
 				QA= "0%";
 			}
+
+
+
 			// cambia lo que va a mostrar el OLED
 			if (page == 1){
 				linea1 = status_wifi;
@@ -284,17 +311,13 @@ function update_Oled(){
 			}
 			if (page == 2){
 
-				var temp_cpu = 10;
-				var memUsage = 10;
-				var diskUsage = 10;
-				var battlevel = 10;
-
 				oled.clearDisplay();
-				linea1 = "hostname:";
-				linea2 = "Temx:";
-				linea3 = "Mem:";
-				linea4 = "Disc:";
-				linea5 = "Batt:";
+	
+				linea1 = "Hostname: " + hostname;
+				linea2 = "Temp: " + temp_cpu + "C";
+				linea3 = "Mem: " + mem_porce + "%";
+				linea4 = "Disk: " + diskUsage + "%";
+				linea5 = "Batt: " + battlevel + "%";
 
 				oled.setCursor(0, spacing*0);
 				oled.writeString(font, 1, linea1 , 1, true); 
@@ -313,12 +336,36 @@ function update_Oled(){
 
 				
 				// rectangulos
-				//oled.fillRect(30,spacing*1,100        ,8, 1);
-				///oled.fillRect(30,spacing*1,memUsage   ,8, 1);
-				oled.fillRect(30,spacing*2,100        ,8, 0);
-				oled.fillRect(30,spacing*2,temp_cpu   ,8, 1);
-				oled.fillRect(30,spacing*3,100        ,8, 0);
-				oled.fillRect(30,spacing*3,diskUsage  ,8, 1);
+				oled.fillRect(65,spacing*1, map_range(temp_cpu)  ,8, 1);
+				oled.fillRect(65,spacing*2, map_range(mem_porce)  ,8, 1);
+				oled.fillRect(65,spacing*3, map_range(diskUsage) ,8, 1);
+				oled.fillRect(65,spacing*4, map_range(battlevel) ,8, 1);
+
+				// Barras de Procesos *********************************************
+				//Draw rectangule emply	
+				for (let i = 1; i < 5; i++) {					
+						oled.drawLine(65, spacing*i, 123, spacing*i, 1); //recta superior
+						oled.drawLine(65, spacing*i+7, 123, spacing*i+7, 1); //recta superior
+						oled.drawPixel([ // recta horizontal derecha
+						[123, spacing*i, 1],
+						[123, spacing*i+1, 1],
+						[123, spacing*i+2, 1],
+						[123, spacing*i+3, 1],
+						[123, spacing*i+4, 1],
+						[123, spacing*i+5, 1],
+						[123, spacing*i+6, 1]
+						]);
+						oled.drawPixel([ // recta horizontal izquierda
+						[65, spacing*i, 1],
+						[65, spacing*i+1, 1],
+						[65, spacing*i+2, 1],
+						[65, spacing*i+3, 1],
+						[65, spacing*i+4, 1],
+						[65, spacing*i+5, 1],
+						[65, spacing*i+6, 1]
+						]);					
+				}
+				// end barras de procesos ********************************************
 
 				//Page
 				oled.setCursor(109, 57);
@@ -328,25 +375,35 @@ function update_Oled(){
 
 			}
 			if (page == 3){
-				linea1 = "mac:";
-				linea2 = "AWS:";
-				linea3 = "Azure:";
-				linea4 = "Google:";
-				linea5 = "";
+				linea1 = "Date: " +  day + " " + month + " " + year;
+				linea2 = "Time " + time;
+				linea3 = "";
+				linea4 = "Time Elapsed:";
+				linea5 = days + "d " + hour + "h " + minute + "m " + second + "s";
+				
+				
 			}
 			if (page == 4){
+				linea1 = "IoT:";
+				linea2 = mac;
+				linea3 = "AWS: < not >";
+				linea4 = "Azure: < not >";
+				linea5 = "Google: < not >";
+				
+			}
+			if (page == 5){
 				oled.clearDisplay();
 			
-				pngtolcd('carjavi128x64_new.png', true, function(err, bitmap) {
+				pngtolcd('cat-128x64.png', true, function(err, bitmap) {
 					oled.buffer = bitmap;
 					oled.update();
 				});
 
-				page = 5;
+				page = 6;
 
 			}
 			
-			if (page != 4 && page != 5 && page != 2){
+			if (page != 5 && page != 6 && page != 2){
 				oled.clearDisplay();
 				oled.update();
 
@@ -354,7 +411,7 @@ function update_Oled(){
 				oled.writeString(font, 1, linea1 , 1, true); 
 
 				oled.setCursor(0, spacing*1);
-				oled.writeString(font, 1,linea2 , 1, true); 
+				oled.writeString(font, 1, linea2 , 1, true); 
 
 				oled.setCursor(0, spacing*2);
 				oled.writeString(font, 1, linea3 , 1, true);
@@ -367,7 +424,7 @@ function update_Oled(){
 				
 				//Page
 				oled.setCursor(109, 57);
-				oled.writeString(font, 1, page + "/4" , 1, true);
+				oled.writeString(font, 1, page + "/5" , 1, true);
 
 				oled.update(); 
 			}
@@ -377,6 +434,11 @@ setInterval(update_Oled, 1000);
 
 
 
+// Re-maps a number from one range to another // llena las barras de procesos
+function map_range(value) {
+    return 0 + (60 - 0) * (value - 0) / (100 - 0);
+}
+
 
 
 //Buttom menu Oled
@@ -384,11 +446,11 @@ button_menu.watch((err, value) => {
 	if (err) {
 	  throw err;
 	}
-  
+
 	if (value == 0) {
-		//console.log("page: ", page);
 		page = page + 1;
-		if(page>4) {page = 1;}
+		console.log("page: ", page);
+		if(page>5) {page = 1;}
 	}
 });
 
@@ -413,10 +475,91 @@ function updateIp() {
 			wifi_rssi();
 			status_wifi = "Connected";	
 		}
-
 	});
+
+	// obtiene el hostname
+	child_process.exec("hostname", function(err, out){ 
+		if(err){
+			console.log(err.message);
+		}
+		hostname = out;
+	});
+
+	// obtiene la mac
+	child_process.exec("cat /sys/class/net/wlan0/address", function(err, out){ 
+		if(err){
+			console.log(err.message);
+		}
+		mac = out;
+	});
+	
+
+	// obtiene la temperatura
+	child_process.exec("cat /sys/class/thermal/thermal_zone0/temp", function(err, out){ 
+		if(err){
+			console.log(err.message);
+		}
+		var oC = (parseFloat(out))/1000;
+		temp_cpu = Math.round(oC);
+	});
+
+
+	// calculo de memoria / report ram stats (raspbian uses 1024 B = 1 KB)
+	ram_free = os.freemem()/(1024*1024);	 
+	ram_total = os.totalmem()/(1024*1024); 
+	memUsage = ram_total - ram_free;
+	mem_porce = (memUsage * 100)/ram_total;
+	mem_porce = mem_porce.toFixed(1);
+	//console.log("ram total: ", ram_total);
+	//console.log("ram free: ", ram_free);
+
+
+	// espacio del disco
+	child_process.exec("df /", function (err, stdout, stderr) {
+		if(err){
+			console.log(err.message);
+		}
+		var data = stdout.split("\n")[1].match(/\S+/g);
+		//console.log("espacio disco", parseInt(data[4]));
+		diskUsage = parseInt(data[4]);	
+	});
+
+	// fecha / tiempo 
+	var d = new Date();
+	day = d.getDate();
+	const months =["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+	month = months [d.getMonth()];
+	year = d.getFullYear();
+	//console.log(day +" " + month + " " + year);
+
+	//hora
+	const date = new Date();
+	time = date.toLocaleTimeString("es-CL", {
+		timeZone: "America/Santiago",
+		hour12: true, // false
+		hour: "numeric", // 2-digit
+		minute: "2-digit", // numeric
+		second: "2-digit" // numeric
+   });
+   //console.log(time);
+
+	// tiempo transcurrido
+	t = t + 1;
+	days = Math.floor (t / (24 * 3600)); // Math.floor () redondea hacia abajo 
+	hour = Math.floor( (t - days*24*3600) / 3600); 
+	minute = Math.floor( (t - days*24*3600 - hour*3600) /60 ); 
+	second = t - days*24*3600 - hour*3600 - minute*60;   
+	//console.log(day + "d " + hour + "h " + minute + "m " + second + "s");
+
+	
+
+	
+
 }
-setInterval(updateIp, 1000);
+setInterval(updateIp, 1000); // ojo hay que bajarlo a 1000
+
+
+
 
 
 function wifi_rssi() {
@@ -450,10 +593,13 @@ function wifi_rssi() {
 /* -------------------------------------------   end OLED   ------------------------------------------------ */
 
 
+
+
+
 /* -------------------------------------   chequeo del internet -----------------------------------------------*/
 function updateInternetStatus(flag_Bool) {
 	var _internet_connected;
-	 cmd = child_process.exec('ping -c1 fast.com', function (error, stdout, stderr) {
+	    cmd = child_process.exec('ping -c1 fast.com', function (error, stdout, stderr) {
 		if (flag_Bool) {
 			//console.log("ping -c1 fast.com : ", error + stdout + stderr); // solo se va a mostrar una vez
 		}
