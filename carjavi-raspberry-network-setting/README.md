@@ -9,33 +9,66 @@
 
 <br>
 
+# Configuración IP estática Eth0 para SSH y prioriza Wlan0 para internet
+
 Probado en OS Bookworm. Pone IP fija en Ethernet (eth0) a 192.168.2.2 para SSH y poner predeterminado Wi-Fi (wlan0) por defecto a internet. Usando el paquete ```nmcli```  (el CLI de NetworkManager), este gestiona las interfaces de red.
 
 <br>
 
 # Install
-Automatic:
+## Automatic:
 ```bash
 sudo su -c 'curl -fsSL https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/raspi-network-setting.sh| bash'
 
 ```
-Manually:
+## Manually:
+Download:
 ```bash
-# Download
 curl -O curl -O https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/raspi-network-setting.sh
+```
 
+Install:
+```bash
 # Install
 chmod +x raspi-network-setting.sh && sudo ./raspi-network-setting.sh
 ```
 
-test:
+Testing:
 ```bash
 ip route
 ```
 Debes ver que la ruta default apunta a la puerta de enlace del Wi-Fi y que la interfaz eth0 solo está en su subred local.
 
+## Troubleshooting
+> :warning: **Warning:**
+> * Si las interfaces estén gestionadas por otro sistema (como dhcpcd o ifupdown) y NetworkManager no las controla hay problemas. Debes asegurarte que NetworkManager gestione ambas interfaces.
+> * Si usas dhcpcd u otro gestor, deshabilítalo para esas interfaces y habilita NetworkManager.
 
 <br>
+
+# Seleccionar Red WIFI mediante comando .sh
+
+Descargar:
+```bash
+curl -O curl -O https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/find_wifi-rpi.sh
+```
+Install:
+```bash
+chmod +x find_wifi-rpi.sh && sudo ./find_wifi-rpi.sh
+```
+
+## Configuración manual (sin el archivo .sh)
+```bash
+nmcli device wifi list # Ver redes disponibles
+sudo nmcli device wifi connect <SSID> password <contraseña> # Conectar a una red
+nmcli connection show --active # Ver estado de la conexión
+```
+
+
+<br>
+
+# Archivos
+
 
 raspi-network-setting:
 ```bash
@@ -90,12 +123,68 @@ echo "   - $WIFI_CON → DHCP con prioridad para internet"
 
 <br>
 
-# Troubleshooting
-> :warning: **Warning:**
-> * Si las interfaces estén gestionadas por otro sistema (como dhcpcd o ifupdown) y NetworkManager no las controla hay problemas. Debes asegurarte que NetworkManager gestione ambas interfaces.
-> * Si usas dhcpcd u otro gestor, deshabilítalo para esas interfaces y habilita NetworkManager.
+
+
+find_wifi-rpi.sh:
+
+```bash
+#!/bin/bash
+
+# Escanear redes WiFi
+echo "Escaneando redes WiFi disponibles..."
+sudo nmcli device wifi rescan
+sleep 2
+networks=$(nmcli -f SSID,SECURITY device wifi list | sed '1d' | awk '{$1=$1;print}')
+
+if [ -z "$networks" ]; then
+  echo "No se encontraron redes WiFi."
+  exit 1
+fi
+
+echo "Redes disponibles:"
+mapfile -t lines <<< "$networks"
+for i in "${!lines[@]}"; do
+  echo "$((i+1)). ${lines[$i]}"
+done
+
+# Seleccionar red
+read -p "Selecciona el número de la red a conectar: " choice
+if ! [[ "$choice" =~ ^[0-9]+$ ]] || [ "$choice" -le 0 ] || [ "$choice" -gt "${#lines[@]}" ]; then
+  echo "Selección inválida."
+  exit 1
+fi
+
+ssid=$(echo "${lines[$((choice-1))]}" | awk '{print $1}')
+
+# Pedir password si la red está protegida
+security=$(echo "${lines[$((choice-1))]}" | awk '{print $2}')
+if [[ "$security" != "--" ]]; then
+  read -s -p "Ingresa la contraseña para $ssid: " password
+  echo
+  cmd="sudo nmcli device wifi connect \"$ssid\" password \"$password\""
+else
+  cmd="sudo nmcli device wifi connect \"$ssid\""
+fi
+
+# Ejecutar conexión
+echo "Conectando a $ssid..."
+eval $cmd
+
+if [ $? -ne 0 ]; then
+  echo "Error al conectar."
+  exit 1
+fi
+
+# Mostrar nueva IP
+echo "Nueva IP asignada:"
+nmcli device show wlan0 | grep 'IP4.ADDRESS'
+
+
+```
 
 <br>
+<br>
+
 
 ---
 
