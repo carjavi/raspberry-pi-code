@@ -183,8 +183,6 @@ nmcli device show wlan0 | grep 'IP4.ADDRESS'
 ```
 
 <br>
-<br>
-
 
 ---
 

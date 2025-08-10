@@ -17,7 +17,8 @@
 <br>
 
 # Install
-Descarga e instala Docker, Docker Compose v2 y Portainer en Raspberry Pi 4 OS Bookworm (64-bit recomendado)
+Descarga, instala o actualiza Docker, Docker Compose y Portainer en Raspberry Pi 4 OS Bookworm (64-bit recomendado). Agrega el usuario root  y carjavi al grupo Docker, muestran las IP para acceder a Portainer desde Ethernet y WiFi.
+
 ```bash
 sudo su -c 'curl -fsSL https://raw.githubusercontent.com/carjavi/docker-RPi/main/install_docker_portainer.sh | bash' 
                        https://raw.githubusercontent.com/carjavi/docker-RPi/main/install_docker_portainer.sh
