@@ -2,12 +2,13 @@
 <h1 align="center">Raspberry Pi Code</h1> 
 <h4 align="right">Ago 25</h4>
 
-<img src="https://img.shields.io/badge/OS%20-Raspbian%20GNU%2FLinux%20(Bookworm)-yellowgreen">
-<img src="https://img.shields.io/badge/Hardware-Raspberry%20ver%204-red">
-<img src="https://img.shields.io/badge/Hardware-Raspberry%20ver%203-red">
-<img src="https://img.shields.io/badge/Node%20-V18.7.0-green">
-<img src="https://img.shields.io/badge/Python%20-V3.9.2-orange">
-
+<p>
+    <img src="https://img.shields.io/badge/OS%20-Raspbian%20GNU%2FLinux%20(Bookworm)-yellowgreen">
+    <img src="https://img.shields.io/badge/Hardware-Raspberry%20ver%204-red">
+    <img src="https://img.shields.io/badge/Hardware-Raspberry%20ver%203-red">
+    <img src="https://img.shields.io/badge/Node%20-V20.18.1-green">
+    <img src="https://img.shields.io/badge/Python%20-V3.13.3-orange">
+</p>
 
 <br>
 
