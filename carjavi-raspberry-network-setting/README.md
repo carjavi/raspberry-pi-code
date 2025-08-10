@@ -34,8 +34,6 @@ ip route
 ```
 Debes ver que la ruta default apunta a la puerta de enlace del Wi-Fi y que la interfaz eth0 solo está en su subred local.
 
-> :memo: **Note:**
-> :bulb: **Tip:**
 
 <br>
 
