@@ -24,7 +24,7 @@ sudo su -c 'curl -fsSL https://raw.githubusercontent.com/carjavi/raspberry-pi-co
 ## Manually:
 Download:
 ```bash
-curl -O curl -O https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/raspi-network-setting.sh
+curl -O https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/raspi-network-setting.sh
 ```
 
 Install:
@@ -50,7 +50,7 @@ Debes ver que la ruta default apunta a la puerta de enlace del Wi-Fi y que la in
 
 Descargar:
 ```bash
-curl -O curl -O https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/find_wifi-rpi.sh
+curl -O https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/find_wifi-rpi.sh
 ```
 Install:
 ```bash
