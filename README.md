@@ -13,7 +13,7 @@
 <br>
 
 
-Collection codes snippet that I have used in my projects with raspberry
+Codes snippet collection that I have used in my projects with raspberry
 <br>
 
 
