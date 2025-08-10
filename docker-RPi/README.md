@@ -12,6 +12,8 @@
 # Table of contents
 - [Table of contents](#table-of-contents)
 - [Install](#install)
+  - [Automatic:](#automatic)
+  - [Manually](#manually)
 - [Troubleshooting](#troubleshooting)
 
 <br>
@@ -19,19 +21,26 @@
 # Install
 Descarga, instala o actualiza Docker, Docker Compose y Portainer en Raspberry Pi 4 OS Bookworm (64-bit recomendado). Agrega el usuario root  y carjavi al grupo Docker, muestran las IP para acceder a Portainer desde Ethernet y WiFi.
 
+## Automatic:
 ```bash
-sudo su -c 'curl -fsSL https://raw.githubusercontent.com/carjavi/docker-RPi/main/install_docker_portainer.sh | bash' 
-                       https://raw.githubusercontent.com/carjavi/docker-RPi/main/install_docker_portainer.sh
+sudo su -c 'curl -fsSL https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/docker-RPi/install_docker_portainer.sh| bash' 
 
 ```
-> :memo: **Note:**
-> :bulb: **Tip:**
+## Manually
+Download:
+```bash
+curl -O https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/docker-RPi/install_docker_portainer.sh
+```
+Install:
+```bash
+chmod +x install_docker_portainer.sh && sudo ./install_docker_portainer.sh
+```
 
 
 <br>
 
 # Troubleshooting
-> :warning: **Warning:**
+> :warning: **Warning:** Aun no se reportan problemas.
 
 <br>
 
