@@ -16,13 +16,13 @@ Probado en OS Bookworm. Pone IP fija en Ethernet (eth0) a 192.168.2.2 para SSH y
 # Install
 Automatic:
 ```bash
-sudo su -c 'curl -fsSL https://raw.githubusercontent.com/carjavi/releases-manager-git/main/install_file.sh | bash'
+sudo su -c 'curl -fsSL https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/raspi-network-setting.sh| bash'
 
 ```
 Manually:
 ```bash
 # Download
-curl -O https://raw.githubusercontent.com/carjavi/releases-manager-git/main/install_file.sh
+curl -O curl -O https://raw.githubusercontent.com/carjavi/raspberry-pi-code/main/carjavi-raspberry-network-setting/raspi-network-setting.sh
 
 # Install
 chmod +x raspi-network-setting.sh && sudo ./raspi-network-setting.sh
