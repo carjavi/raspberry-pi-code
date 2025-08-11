@@ -65,6 +65,9 @@ docker run hello-world
 ```
 
 # Creating Our Own Images
+Estoy trabajando en un mini tutorial buenisimo!... 
+
+<br>
 
 ---
 
